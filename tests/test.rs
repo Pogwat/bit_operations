@@ -1,4 +1,4 @@
-use bitops::BitOps;
+use bit_operations::BitOps;
 #[test]
 fn bitops_get_set() {
     let mut num:u8 = 8; //0001
@@ -46,8 +46,8 @@ fn bitops_get_set_bits(){
 
 #[test]
 fn bitops_first_last_set_bit() {
-    let bit_set:u8 = 5;
-    let mut num:u8 = 2_u8.pow(5); // 001
+    let bit_set = 5;
+    let mut num:u8 = 2_u8.pow(bit_set); // 001
     assert_eq!(num.first_set_bit(), 5);
     assert_eq!(num.last_set_bit(), 5);
     let last_bit = 7;
