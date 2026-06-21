@@ -59,7 +59,7 @@ Get Mutable Refrence to Bit. IMPORTANT: ref needs to be dropped for bit to updat
 use bit_operations::BitOps;
 let mut num:u8 =0;
 { 
-    let mut bit_mut = num.get_mut(7);
+    let mut bit_mut = num.mut_bit(7);
     *bit_mut =true;
 } //MUT REF MUST BE DROPPED FOR BIT TO BE UPDATED!!! DROP UPDATES
 assert_eq!(num.get_bit(7), true);

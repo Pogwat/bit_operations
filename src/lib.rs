@@ -25,7 +25,7 @@ pub trait BitOps:BitTypes {
     /// get the last set bit can go OOB
     fn last_set_bit(&self) -> usize;
     // get mutable ref to type using proxy
-    fn get_mut(&mut self, bit:usize) -> MutBitProxy<Self>;
+    fn mut_bit(&mut self, bit:usize) -> MutBitProxy<'_,Self>;
 }
 use std::ops::{Shl,Sub,BitXor,Not};
 pub trait BitTypes: Sized+Shl<usize, Output = Self> + Sub<Self, Output = Self> + BitXor<Self, Output = Self> +  Not{}
@@ -70,7 +70,7 @@ macro_rules! bittypes {
                 fn first_set_bit(&self) -> usize {self.trailing_zeros() as usize} //Can go OOB
                 fn last_set_bit(&self) -> usize {(Self::BITS -1 - self.leading_zeros()) as usize} //Can go OOB
                 //Get Mut ref to bit, MUST DROP REF FOR BIT TO UPDATE!!!!
-                fn get_mut(&mut self, bit:usize) -> MutBitProxy<Self> {MutBitProxy::<Self>::new(self,bit)}
+                fn mut_bit(&mut self, bit:usize) -> MutBitProxy<'_,Self> {MutBitProxy::<Self>::new(self,bit)}
             }
         )*
     }

@@ -65,7 +65,7 @@ fn bitops_set_these_bits() {
 #[test]
 fn get_mut_bitops() {
     let mut num:u8 =0b11111111;
-    { let mut bit_mut = num.get_mut(5);
+    { let mut bit_mut = num.mut_bit(5);
     *bit_mut =false;} //MUT REF MUST BE DROPPED FOR BIT TO BE UPDATED!!! DROP UPDATES
     assert_eq!(num.get_bit(5), false);
     assert_eq!(num,0b11011111);
