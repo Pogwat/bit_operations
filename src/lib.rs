@@ -1,4 +1,6 @@
 #[doc = include_str!("../README.md")]
+mod mut_proxy;
+use mut_proxy::*;
 pub trait BitOps:BitTypes {
     /// Generate a bitmask for aa range of bits
     fn bitmask<R:RangeBounds<usize>+ NumRangeExtract<usize>>(range: &R) -> Self;
@@ -22,6 +24,8 @@ pub trait BitOps:BitTypes {
     fn first_set_bit(&self) -> usize;
     /// get the last set bit can go OOB
     fn last_set_bit(&self) -> usize;
+    // get mutable ref to type using proxy
+    fn get_mut(&mut self, bit:usize) -> MutBitProxy<Self>;
 }
 use std::ops::{Shl,Sub,BitXor,Not};
 pub trait BitTypes: Sized+Shl<usize, Output = Self> + Sub<Self, Output = Self> + BitXor<Self, Output = Self> +  Not{}
@@ -65,7 +69,7 @@ macro_rules! bittypes {
                 }
                 fn first_set_bit(&self) -> usize {self.trailing_zeros() as usize} //Can go OOB
                 fn last_set_bit(&self) -> usize {(Self::BITS -1 - self.leading_zeros()) as usize} //Can go OOB
-
+                fn get_mut(&mut self, bit:usize) -> MutBitProxy<Self> {MutBitProxy::<Self>::new(self,bit)}
             }
         )*
     }
