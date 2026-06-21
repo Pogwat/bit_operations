@@ -1,6 +1,6 @@
 #[doc = include_str!("../README.md")]
-mod mut_proxy;
-use mut_proxy::*;
+pub mod mut_proxy;
+pub use mut_proxy::MutBitProxy;
 pub trait BitOps:BitTypes {
     /// Generate a bitmask for aa range of bits
     fn bitmask<R:RangeBounds<usize>+ NumRangeExtract<usize>>(range: &R) -> Self;
