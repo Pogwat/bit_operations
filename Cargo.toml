@@ -6,5 +6,6 @@ description = "Bit Manipulation as fast as possible"
 license = "MIT"
 repository = "https://github.com/Pogwat/bitops"
 readme = "README.md"
+keywords = ["no_std"]
 
 [dependencies]
