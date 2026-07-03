@@ -70,3 +70,9 @@ fn get_mut_bitops() {
     assert_eq!(num.get_bit(5), false);
     assert_eq!(num,0b11011111);
 }
+
+#[test]
+fn type_bits() {
+    assert_eq!(u8::TYPE_BITS, 8);
+    assert_eq!(u8::BIT_BITS, 3);
+} 

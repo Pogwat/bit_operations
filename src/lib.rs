@@ -3,6 +3,10 @@
 pub mod mut_proxy;
 pub use mut_proxy::MutBitProxy;
 pub trait BitOps:BitTypes {
+    /// number of bits the type has
+    const TYPE_BITS:usize;
+    /// number of bits required to address a bit in this type
+    const BIT_BITS:usize;
     /// Generate a bitmask for aa range of bits
     fn bitmask<R:RangeBounds<usize>+ NumRangeExtract<usize>>(range: &R) -> Self;
     /// Get a specifc bit by bit index (0 indexed)
@@ -37,6 +41,9 @@ macro_rules! bittypes {
             impl BitTypes for $type {}
 
             impl BitOps for $type {
+                const TYPE_BITS:usize = Self::BITS as usize;
+                const BIT_BITS:usize = Self::BITS.ilog2() as usize;
+
                 fn bitmask<R:RangeBounds<usize>+ NumRangeExtract<usize>>(range:&R) -> Self { //indexes: 0..=Self::BITS-1
                     let start = range.bits_start();
                     let end = range.bits_end();
