@@ -42,7 +42,7 @@ macro_rules! bittypes {
 
             impl BitOps for $type {
                 const TYPE_BITS:usize = Self::BITS as usize;
-                const BIT_BITS:usize = Self::BITS.trailing_zeros() as usize; //ilog2 has panic, equivlent for multiples of 2
+                const BIT_BITS:usize = Self::BITS.ilog2() as usize;
 
                 fn bitmask<R:RangeBounds<usize>+ NumRangeExtract<usize>>(range:&R) -> Self { //indexes: 0..=Self::BITS-1
                     let start = range.bits_start();
