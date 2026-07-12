@@ -10,7 +10,7 @@ fn bitops_get_set() {
 
     num.set_bit(7, true);
     println!("{}",num.get_bit(7));
-    assert_eq!(num, (8+2_u8.pow(7))); 
+    assert_eq!(num, (8+2_u8.pow(7)));
     assert_eq!(num.get_bit(7), true);
     assert_eq!(num.get_bit(3), true);
     println!("{}",num);
@@ -33,6 +33,9 @@ fn bitops_popcnt_ctz() {
     let num:u8 = 2_u8.pow(7)-1;
     assert_eq!(num.count_zeros() as usize,num.ctz(&(0..=7)));
     assert_eq!(num.count_ones() as usize,num.popcnt(&(0..=7)));
+
+    assert_eq!(num.count_zeros() as usize,num.ctz(&(0..)));
+    assert_eq!(num.count_zeros() as usize,num.ctz(&(..8)));
 }
 
 #[test]
@@ -59,7 +62,7 @@ fn bitops_first_last_set_bit() {
 fn bitops_set_these_bits() {
     let mut num:u8 = 255;
     num.set_these_bits(0b0111, &(0..4));
-    println!("{:08b}", num); 
+    println!("{:08b}", num);
     assert_eq!(num, 255-2_u8.pow(3))
 }
 #[test]
@@ -75,4 +78,4 @@ fn get_mut_bitops() {
 fn type_bits() {
     assert_eq!(u8::TYPE_BITS, 8);
     assert_eq!(u8::BIT_BITS, 3);
-} 
+}
