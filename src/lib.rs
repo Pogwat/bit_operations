@@ -8,23 +8,23 @@ pub trait BitOps:BitTypes {
     /// number of bits required to address a bit in this type
     const BIT_BITS:usize;
     /// Generate a bitmask for aa range of bits
-    fn bitmask<R:NumRangeExtract<Self> >(range: &R) -> Self;
+    fn bitmask<R:BitZRange<Self> >(range: &R) -> Self;
     /// Get a specifc bit by bit index (0 indexed)
     fn get_bit(&self, bitdex:usize) -> bool;
     /// Set a specifc bit by bit index (0 indexed)
     fn set_bit(&mut self, bitdex:usize, val:bool);
     /// Get bits in range (0 indexed)
-    fn get_bits<R:NumRangeExtract<Self> >(&self, range:&R) -> Self;
+    fn get_bits<R:BitZRange<Self> >(&self, range:&R) -> Self;
     /// count 0 bits in range (0 indexed)
-    fn ctz<R:NumRangeExtract<Self> >(&self, range:&R) -> usize;
+    fn ctz<R:BitZRange<Self> >(&self, range:&R) -> usize;
     /// count 1 bits in range (0 indexed)
-    fn popcnt<R:NumRangeExtract<Self> >(&self, range:&R) -> usize;
+    fn popcnt<R:BitZRange<Self> >(&self, range:&R) -> usize;
     /// set bits in range to val (0 indexed)
-    fn set_bits<R:NumRangeExtract<Self> >(&mut self, range:&R, val:bool);
+    fn set_bits<R:BitZRange<Self> >(&mut self, range:&R, val:bool);
     /// set all bits to val
     fn set_all_bit(val:bool) -> Self;
     /// set a specfic range of self to these bits (0 indexed)
-    fn set_these_bits<R:NumRangeExtract<Self> >(&mut self, bits:Self, range:&R);
+    fn set_these_bits<R:BitZRange<Self> >(&mut self, bits:Self, range:&R);
     /// get the first set bit can go OOB
     fn first_set_bit(&self) -> usize;
     /// get the last set bit can go OOB
@@ -44,7 +44,7 @@ macro_rules! bittypes {
                 const TYPE_BITS:usize = Self::BITS as usize;
                 const BIT_BITS:usize = Self::BITS.ilog2() as usize;
 
-                fn bitmask<R:NumRangeExtract<Self>>(range:&R) -> Self { //indexes: 0..=Self::BITS-1
+                fn bitmask<R:BitZRange<Self> >(range:&R) -> Self { //indexes: 0..=Self::BITS-1
                     let start = range.bits_start();
                     let end = range.bits_end();
                     (Self::MAX >> (Self::TYPE_BITS - 1 - (end - start))) << start
@@ -56,14 +56,14 @@ macro_rules! bittypes {
                     *self = (*self & !mask) | (val as Self)<<bitdex; //Clear bit then set it
                 }
 
-                fn ctz<R:NumRangeExtract<Self> >(&self, range:&R) -> usize {
+                fn ctz<R:BitZRange<Self> >(&self, range:&R) -> usize {
                     ((!Self::bitmask(range)) | self).count_zeros() as usize //  111111BitsWeWant1111111 , others are 1
                 }
-                fn get_bits<R:NumRangeExtract<Self> >(&self, range:&R) -> Self {Self::bitmask(range) & self}
-                fn popcnt<R:NumRangeExtract<Self> >(&self, range:&R) -> usize {
+                fn get_bits<R:BitZRange<Self> >(&self, range:&R) -> Self {Self::bitmask(range) & self}
+                fn popcnt<R:BitZRange<Self> >(&self, range:&R) -> usize {
                     self.get_bits(range).count_ones() as usize
                 }
-                fn set_these_bits<R:NumRangeExtract<Self> >(&mut self, bits:Self, range:&R) {
+                fn set_these_bits<R:BitZRange<Self> >(&mut self, bits:Self, range:&R) {
                     //XOR is commutative and self-inverse
                     //A ^B ^B  = A ^(B^B), B^B = 0, So A^B^B = A , dobule xoring undos xor
                     //Here we Self^Bits and truncate it, then we xor it to reverse the xors, giving us self and truncated bits
@@ -71,7 +71,7 @@ macro_rules! bittypes {
                     *self ^= diff; //XORing the diff undo the xor leaving just a truncated bits and self
                 }
                 fn set_all_bit(val:bool) -> Self {(0 as Self).wrapping_sub(val as Self) /*0000.. if 0  ,  1111.. if 1*/}
-                fn set_bits<R:NumRangeExtract<Self> >(&mut self, range:&R, val:bool) {
+                fn set_bits<R:BitZRange<Self> >(&mut self, range:&R, val:bool) {
                     self.set_these_bits(Self::set_all_bit(val),range)
                 }
                 fn first_set_bit(&self) -> usize {self.trailing_zeros() as usize} //Can go OOB
