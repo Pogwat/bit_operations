@@ -1,6 +1,6 @@
 [package]
 name = "bit_operations"
-version = "0.1.7"
+version = "0.2.0"
 edition = "2024"
 description = "Bit Manipulation as fast as possible"
 license = "MIT"
