@@ -20,22 +20,22 @@ fn bitops_get_set() {
 fn bitops_bitmask() {
     let num:u8 =BitOps::bitmask(&(0..8));
     println!("bitmask:{:?}",num);
-    assert_eq!(num as usize, 2_usize.pow(8)-1)
+    assert_eq!(num, u8::MAX)
 }
 
 #[test]
 fn bitops_popcnt_ctz() {
     let num:u8 = u8::MAX;
     println!("{}", num.ctz(&(0..8)));
-    assert_eq!(num.count_zeros() as usize,num.ctz(&(0..8)));
-    assert_eq!(num.count_ones() as usize,num.popcnt(&(0..8)));
+    assert_eq!(num.count_zeros() as u8,num.ctz(&(0..8)));
+    assert_eq!(num.count_ones() as u8,num.popcnt(&(0..8)));
 
     let num:u8 = 2_u8.pow(7)-1;
-    assert_eq!(num.count_zeros() as usize,num.ctz(&(0..=7)));
-    assert_eq!(num.count_ones() as usize,num.popcnt(&(0..=7)));
+    assert_eq!(num.count_zeros() as u8,num.ctz(&(0..=7)));
+    assert_eq!(num.count_ones() as u8,num.popcnt(&(0..=7)));
 
-    assert_eq!(num.count_zeros() as usize,num.ctz(&(0..)));
-    assert_eq!(num.count_zeros() as usize,num.ctz(&(..8)));
+    assert_eq!(num.count_zeros() as u8,num.ctz(&(0..)));
+    assert_eq!(num.count_zeros() as u8,num.ctz(&(..8)));
 }
 
 #[test]

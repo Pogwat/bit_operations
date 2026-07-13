@@ -4,7 +4,7 @@ use crate::BitOps;
 pub struct MutBitProxy<'a,ElementType:BitOps> {
     val:bool,
     addr: &'a mut ElementType,
-    bit:u8    
+    bit:u8
 }
 
 use core::ops::{Deref,DerefMut};
@@ -19,12 +19,12 @@ impl <'a,ElementType:BitOps> DerefMut for MutBitProxy<'a,ElementType> {
 }
 
 impl<'a, ElementType:BitOps> Drop for MutBitProxy<'a, ElementType> {
-    fn drop(&mut self) {self.addr.set_bit(self.bit as usize, self.val)}
+    fn drop(&mut self) {self.addr.set_bit(self.bit, self.val)}
 }
 
 impl <'a,ElementType:BitOps> MutBitProxy<'a,ElementType> {
-    //New proxy
-    pub fn new(addr:&'a mut ElementType,bit:usize) -> Self {
-        Self {val: addr.get_bit(bit),addr,bit:bit as u8}
+    ///New proxy
+    pub fn new(addr:&'a mut ElementType,bit:u8) -> Self {
+        Self {val: addr.get_bit(bit),addr,bit}
     }
 }

@@ -4,21 +4,21 @@ pub mod mut_proxy;
 pub use mut_proxy::MutBitProxy;
 pub trait BitOps:BitTypes {
     /// number of bits the type has
-    const TYPE_BITS:usize;
+    const TYPE_BITS:u8;
     /// number of bits required to address a bit in this type
-    const BIT_BITS:usize;
+    const BIT_BITS:u8;
     /// Generate a bitmask for aa range of bits
     fn bitmask<R:BitZRange<Self> >(range: &R) -> Self;
     /// Get a specifc bit by bit index (0 indexed)
-    fn get_bit(&self, bitdex:usize) -> bool;
+    fn get_bit(&self, bitdex:u8) -> bool;
     /// Set a specifc bit by bit index (0 indexed)
-    fn set_bit(&mut self, bitdex:usize, val:bool);
+    fn set_bit(&mut self, bitdex:u8, val:bool);
     /// Get bits in range (0 indexed)
     fn get_bits<R:BitZRange<Self> >(&self, range:&R) -> Self;
     /// count 0 bits in range (0 indexed)
-    fn ctz<R:BitZRange<Self> >(&self, range:&R) -> usize;
+    fn ctz<R:BitZRange<Self> >(&self, range:&R) -> u8;
     /// count 1 bits in range (0 indexed)
-    fn popcnt<R:BitZRange<Self> >(&self, range:&R) -> usize;
+    fn popcnt<R:BitZRange<Self> >(&self, range:&R) -> u8;
     /// set bits in range to val (0 indexed)
     fn set_bits<R:BitZRange<Self> >(&mut self, range:&R, val:bool);
     /// set all bits to val
@@ -26,14 +26,14 @@ pub trait BitOps:BitTypes {
     /// set a specfic range of self to these bits (0 indexed)
     fn set_these_bits<R:BitZRange<Self> >(&mut self, bits:Self, range:&R);
     /// get the first set bit can go OOB
-    fn first_set_bit(&self) -> usize;
+    fn first_set_bit(&self) -> u8;
     /// get the last set bit can go OOB
-    fn last_set_bit(&self) -> usize;
+    fn last_set_bit(&self) -> u8;
     /// get mutable ref to type using proxy, MUST DROP REF FOR BIT TO UPDATE!!!!
-    fn mut_bit(&mut self, bit:usize) -> MutBitProxy<'_,Self>;
+    fn mut_bit(&mut self, bit:u8) -> MutBitProxy<'_,Self>;
 }
 use core::ops::{Shl,Sub,BitXor,Not};
-pub trait BitTypes: Sized+Shl<usize, Output = Self> + Sub<Self, Output = Self> + BitXor<Self, Output = Self> +  Not{}
+pub trait BitTypes: Sized+Shl<u8, Output = Self> + Sub<Self, Output = Self> + BitXor<Self, Output = Self> +  Not{}
 
 macro_rules! bittypes {
     ($($type:ty),*) => {
@@ -41,8 +41,8 @@ macro_rules! bittypes {
             impl BitTypes for $type {}
 
             impl BitOps for $type {
-                const TYPE_BITS:usize = Self::BITS as usize;
-                const BIT_BITS:usize = Self::BITS.ilog2() as usize;
+                const TYPE_BITS:u8 = Self::BITS as u8;
+                const BIT_BITS:u8 = Self::BITS.ilog2() as u8;
 
                 fn bitmask<R:BitZRange<Self> >(range:&R) -> Self { //indexes: 0..=Self::BITS-1
                     let start = range.bits_start();
@@ -50,18 +50,18 @@ macro_rules! bittypes {
                     (Self::MAX >> (Self::TYPE_BITS - 1 - (end - start))) << start
                 }
 
-                fn get_bit(&self, bitdex:usize) -> bool {(self & 1<<bitdex) !=0 }
-                fn set_bit(&mut self, bitdex:usize, val:bool) {
+                fn get_bit(&self, bitdex:u8) -> bool {(self & 1<<bitdex) !=0 }
+                fn set_bit(&mut self, bitdex:u8, val:bool) {
                     let mask = 1<<bitdex;
                     *self = (*self & !mask) | (val as Self)<<bitdex; //Clear bit then set it
                 }
 
-                fn ctz<R:BitZRange<Self> >(&self, range:&R) -> usize {
-                    ((!Self::bitmask(range)) | self).count_zeros() as usize //  111111BitsWeWant1111111 , others are 1
+                fn ctz<R:BitZRange<Self> >(&self, range:&R) -> u8 {
+                    ((!Self::bitmask(range)) | self).count_zeros() as u8 //  111111BitsWeWant1111111 , others are 1
                 }
                 fn get_bits<R:BitZRange<Self> >(&self, range:&R) -> Self {Self::bitmask(range) & self}
-                fn popcnt<R:BitZRange<Self> >(&self, range:&R) -> usize {
-                    self.get_bits(range).count_ones() as usize
+                fn popcnt<R:BitZRange<Self> >(&self, range:&R) -> u8 {
+                    self.get_bits(range).count_ones() as u8
                 }
                 fn set_these_bits<R:BitZRange<Self> >(&mut self, bits:Self, range:&R) {
                     //XOR is commutative and self-inverse
@@ -74,9 +74,9 @@ macro_rules! bittypes {
                 fn set_bits<R:BitZRange<Self> >(&mut self, range:&R, val:bool) {
                     self.set_these_bits(Self::set_all_bit(val),range)
                 }
-                fn first_set_bit(&self) -> usize {self.trailing_zeros() as usize} //Can go OOB
-                fn last_set_bit(&self) -> usize {(Self::BITS -1 - self.leading_zeros()) as usize} //Can go OOB
-                fn mut_bit(&mut self, bit:usize) -> MutBitProxy<'_,Self> {MutBitProxy::<Self>::new(self,bit)} //Returns proxy struct, on drop proxy updates bit
+                fn first_set_bit(&self) -> u8 {self.trailing_zeros() as u8} //Can go OOB
+                fn last_set_bit(&self) -> u8 {(Self::BITS -1 - self.leading_zeros()) as u8} //Can go OOB
+                fn mut_bit(&mut self, bit:u8) -> MutBitProxy<'_,Self> {MutBitProxy::<Self>::new(self,bit)} //Returns proxy struct, on drop proxy updates bit
             }
         )*
     }
@@ -91,8 +91,8 @@ pub trait NumRangeExtract<T>: RangeBounds<T>  {
 }
 
 pub trait BitZRange<T>: NumRangeExtract<T> {
-    fn bits_end(&self) -> usize;
-    fn bits_start(&self) -> usize;
+    fn bits_end(&self) -> u8;
+    fn bits_start(&self) -> u8;
 }
 
 macro_rules! num_rangy {
@@ -116,8 +116,8 @@ macro_rules! num_rangy {
             }
 
             impl <R:NumRangeExtract<$type>> BitZRange<$type> for R {
-                fn bits_start(&self) -> usize {self.start().unwrap_or(0).max(0) as usize}
-                fn bits_end(&self) -> usize {self.end().unwrap_or(<$type>::BITS as $type).min((<$type>::BITS as $type)-1) as usize}
+                fn bits_start(&self) -> u8 {(self.start().unwrap_or(0) as u8).max(0)}
+                fn bits_end(&self) -> u8 {self.end().unwrap_or(<$type>::TYPE_BITS as $type-1).min(<$type>::TYPE_BITS as $type-1) as u8}
             }
 
         )*
