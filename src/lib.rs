@@ -85,10 +85,11 @@ pub trait NumRangeExtract<T>: RangeBounds<T>  {
     fn start(&self) -> Option<T>;
 }
 
-pub trait BitZRange<T>: NumRangeExtract<T> {
-    fn bits_end(&self) -> u8;
-    fn bits_start(&self) -> u8;
+pub trait BitZRange<ElementType:BitOps> :NumRangeExtract<u8> {
+    fn bits_start(&self) -> u8 {self.start().unwrap_or(0).max(0)}
+    fn bits_end(&self) -> u8 {self.end().unwrap_or(ElementType::TYPE_BITS as u8-1).min(ElementType::TYPE_BITS as u8-1)}
 }
+impl <ElementType:BitOps, R:NumRangeExtract<u8> > BitZRange<ElementType> for R {}
 
 macro_rules! num_rangy {
     ($($type:ty),*) => {
@@ -109,12 +110,6 @@ macro_rules! num_rangy {
                     }
                 }
             }
-
-            impl <R:NumRangeExtract<$type>> BitZRange<$type> for R {
-                fn bits_start(&self) -> u8 {(self.start().unwrap_or(0) as u8).max(0)}
-                fn bits_end(&self) -> u8 {self.end().unwrap_or(<$type>::TYPE_BITS as $type-1).min(<$type>::TYPE_BITS as $type-1) as u8}
-            }
-
         )*
     }
 }

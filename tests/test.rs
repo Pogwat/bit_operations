@@ -36,6 +36,10 @@ fn bitops_popcnt_ctz() {
 
     assert_eq!(num.count_zeros() as u8,num.ctz(&(0..)));
     assert_eq!(num.count_zeros() as u8,num.ctz(&(..8)));
+
+    let num:u16 = u16::MAX;
+    assert_eq!(num.count_zeros() as u8,num.ctz(&(..8)));
+
 }
 
 #[test]
