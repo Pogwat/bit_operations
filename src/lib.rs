@@ -2,7 +2,7 @@
 #[doc = include_str!("../README.md")]
 pub mod mut_proxy;
 pub use mut_proxy::MutBitProxy;
-pub trait BitOps:BitTypes {
+pub trait BitOps:Sized {
     /// number of bits the type has
     const TYPE_BITS:u8;
     /// number of bits required to address a bit in this type
@@ -32,14 +32,9 @@ pub trait BitOps:BitTypes {
     /// get mutable ref to type using proxy, MUST DROP REF FOR BIT TO UPDATE!!!!
     fn mut_bit(&mut self, bit:u8) -> MutBitProxy<'_,Self>;
 }
-use core::ops::{Shl,Sub,BitXor,Not};
-pub trait BitTypes: Sized+Shl<u8, Output = Self> + Sub<Self, Output = Self> + BitXor<Self, Output = Self> +  Not{}
-
 macro_rules! bittypes {
     ($($type:ty),*) => {
         $(
-            impl BitTypes for $type {}
-
             impl BitOps for $type {
                 const TYPE_BITS:u8 = Self::BITS as u8;
                 const BIT_BITS:u8 = Self::BITS.ilog2() as u8;

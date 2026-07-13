@@ -2,8 +2,11 @@
 use crate::BitOps;
 //Proxy For Bit Mutating
 pub struct MutBitProxy<'a,ElementType:BitOps> {
+    ///Bit being derefed to
     val:bool,
+    ///Address to write back to on Drop
     addr: &'a mut ElementType,
+    ///Bit in *Address to write val to
     bit:u8
 }
 
