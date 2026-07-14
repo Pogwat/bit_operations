@@ -1,7 +1,7 @@
 #![no_std]
 #[doc = include_str!("../README.md")]
 pub mod mut_proxy;
-use intops::IntOps;
+pub use intops::IntOps;
 pub use mut_proxy::MutBitProxy;
 pub trait BitOps:IntOps {
     /// number of bits required to address a bit in this type
