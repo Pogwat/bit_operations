@@ -10,14 +10,14 @@ pub trait BitOps:IntOps {
     fn bitmask<R:BitZRange<Self> >(range:&R) -> Self { //indexes: 0..=Self::BITS-1
         let start = range.bits_start();
         let end = range.bits_end();
-        (Self::MAX >> (Self::BITS - 1 - (end as u32 - start as u32))) << start as u32
+        (Self::MAX >> (Self::BITS as u8 - 1 - (end - start))) << start
     }
     /// Get a specifc bit by bit index (0 indexed)
-    fn get_bit(&self, bitdex:u8) -> bool {(*self & Self::ONE<<bitdex as usize) !=Self::ZERO }
+    fn get_bit(&self, bitdex:u8) -> bool {(*self & Self::ONE<<bitdex) !=Self::ZERO }
     /// Set a specifc bit by bit index (0 indexed)
     fn set_bit(&mut self, bitdex:u8, val:bool) {
-        let mask = Self::ONE<<bitdex as usize;
-        *self = (*self & !mask) | Self::from(val)<<bitdex as usize; //Clear bit then set it
+        let mask = Self::ONE<<bitdex;
+        *self = (*self & !mask) | Self::from(val)<<bitdex; //Clear bit then set it
     }
     /// Get bits in range (0 indexed)
     fn get_bits<R:BitZRange<Self> >(&self, range:&R) -> Self {Self::bitmask(range) & *self}

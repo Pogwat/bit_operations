@@ -11,6 +11,6 @@ dependencies = [
 
 [[package]]
 name = "intops"
-version = "0.1.1"
+version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "72f0f22e6e3d02ac73cad7c1f03741521df99508ba6b987da172259db722e186"
+checksum = "353e7e05ffb00e27bc0eead9f38c0dd9baab087fbe98a8bc4487b5a33a2e0a72"
