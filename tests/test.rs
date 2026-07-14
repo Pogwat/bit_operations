@@ -80,6 +80,6 @@ fn get_mut_bitops() {
 
 #[test]
 fn type_bits() {
-    assert_eq!(u8::TYPE_BITS, 8);
+    assert_eq!(u8::BITS, 8);
     assert_eq!(u8::BIT_BITS, 3);
 }

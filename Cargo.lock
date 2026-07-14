@@ -5,3 +5,12 @@ version = 4
 [[package]]
 name = "bit_operations"
 version = "0.2.1"
+dependencies = [
+ "intops",
+]
+
+[[package]]
+name = "intops"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "72f0f22e6e3d02ac73cad7c1f03741521df99508ba6b987da172259db722e186"

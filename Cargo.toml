@@ -9,3 +9,4 @@ readme = "README.md"
 keywords = ["no_std", "bit"]
 
 [dependencies]
+intops = "0.1.0"
