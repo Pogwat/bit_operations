@@ -71,19 +71,19 @@ assert_eq!(num,0b10000000);
 
 Get first or last set or unset bit in a specific type
 ```rust
-    use bit_operations::BitOps;
-    let num:u8 = 0b10110100;
-    // first/last set bit
-    assert_eq!(num.first_one(&(0..)), Some(2));
-    assert_eq!(num.last_one(&(0..)), Some(7));
-    
-    // first/last unset bit
-    assert_eq!(num.first_zero(&(0..)), Some(0));
-    assert_eq!(num.last_zero(&(0..)), Some(6));
+use bit_operations::BitOps;
+let num:u8 = 0b10110100;
+// first/last set bit
+assert_eq!(num.first_one(&(0..)), Some(2));
+assert_eq!(num.last_one(&(0..)), Some(7));
 
-    //using a custom range
-    assert_eq!(num.first_one(&(0..=1)), None);
-    
+// first/last unset bit
+assert_eq!(num.first_zero(&(0..)), Some(0));
+assert_eq!(num.last_zero(&(0..)), Some(6));
+
+//using a custom range
+assert_eq!(num.first_one(&(0..=1)), None);
+
 ```
 
 for full documentation use docs.rs: [docs](https://docs.rs/bit_operations/latest/bit_operations/)
