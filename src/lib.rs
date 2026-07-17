@@ -3,14 +3,14 @@
 pub mod mut_proxy;
 pub use intops::IntOps;
 pub use mut_proxy::MutBitProxy;
-pub trait BitOps:IntOps {
+pub trait BitOps:IntOps { //Todo: Make this trait const when #143874 is staballized: https://github.com/rust-lang/rust/issues/143874
     /// number of bits required to address a bit in this type
     const BIT_BITS:u32 = Self::BITS.ilog2();
     /// Generate a bitmask for aa range of bits
     fn bitmask<R:BitZRange<Self> >(range:&R) -> Self { //indexes: 0..=Self::BITS-1
         let start = range.bits_start();
         let end = range.bits_end();
-        (Self::MAX >> (Self::BITS as u8 - 1 - (end - start))) << start
+        (!Self::ZERO >> (Self::BITS as u8 - 1 - (end - start))) << start
     }
     /// Get a specifc bit by bit index (0 indexed)
     fn get_bit(&self, bitdex:u8) -> bool {(*self & Self::ONE<<bitdex) !=Self::ZERO }
@@ -49,6 +49,18 @@ pub trait BitOps:IntOps {
     fn last_set_bit(&self) -> u8 {(Self::BITS -1 - self.leading_zeros()) as u8} //Can go OOB
     /// get mutable ref to type using proxy, MUST DROP REF FOR BIT TO UPDATE!!!!
     fn mut_bit(&mut self, bit:u8) -> MutBitProxy<'_,Self> {MutBitProxy::<Self>::new(self,bit)} //Returns proxy struct, on drop proxy updates bit
+    /// first one in a bit range
+    fn first_one<R:BitZRange<Self>>(&self, range:&R) -> Option<u8> {
+        let masked =  *self & Self::bitmask(range); //0000BitsWeWant0000
+       (masked!=Self::ZERO).then_some(masked.trailing_zeros() as u8)
+    }
+    /// first zero in a bit range
+    fn first_zero<R:BitZRange<Self>>(&self, range:&R) -> Option<u8> {
+        let masked =  *self | !Self::bitmask(range); //1111BitsWeWant1111
+       (masked!=!Self::ZERO).then_some(masked.trailing_ones() as u8)
+    }
+
+
 }
 impl <T:IntOps>BitOps for T {}
 

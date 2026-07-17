@@ -20,7 +20,10 @@ fn bitops_get_set() {
 fn bitops_bitmask() {
     let num:u8 =BitOps::bitmask(&(0..8));
     println!("bitmask:{:?}",num);
-    assert_eq!(num, u8::MAX)
+    assert_eq!(num, u8::MAX);
+    assert_eq!(u8::bitmask(&(0..1)),1);
+    assert_eq!(u8::bitmask(&(6..7)),2_u8.pow(6));
+    assert_eq!(u8::bitmask(&(6..=6)),2_u8.pow(6));
 }
 
 #[test]
@@ -82,4 +85,22 @@ fn get_mut_bitops() {
 fn type_bits() {
     assert_eq!(u8::BITS, 8);
     assert_eq!(u8::BIT_BITS, 3);
+}
+
+#[test]
+fn first() {
+    let num:u8 = 0b00001000;
+    assert_eq!(num.first_one(&(0..)), Some(3));
+    assert_eq!(num.first_one(&(3..=3)), Some(3));
+    assert_eq!(num.first_one(&(4..)), None);
+
+    assert_eq!(num.first_zero(&(0..)), Some(0));
+    assert_eq!(num.first_zero(&(4..)), Some(4));
+    assert_eq!(num.first_zero(&(3..=3)), None);
+    let num: u8 = 0;
+    assert_eq!(num.first_one(&(0..)), None);
+    assert_eq!(num.first_zero(&(0..)), Some(0));
+    let num: u8 = 0b11111111;
+    assert_eq!(num.first_one(&(0..)), Some(0));
+    assert_eq!(num.first_zero(&(0..)), None);
 }
