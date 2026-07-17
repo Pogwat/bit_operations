@@ -43,22 +43,29 @@ pub trait BitOps:IntOps { //Todo: Make this trait const when #143874 is staballi
         let diff = (*self ^ bits) & Self::bitmask(range); //Truncated diff
         *self ^= diff; //XORing the diff undo the xor leaving just a truncated bits and self
     }
-    /// get the first set bit can go OOB
-    fn first_set_bit(&self) -> u8 {self.trailing_zeros() as u8} //Can go OOB
-    /// get the last set bit can go OOB
-    fn last_set_bit(&self) -> u8 {(Self::BITS -1 - self.leading_zeros()) as u8} //Can go OOB
     /// get mutable ref to type using proxy, MUST DROP REF FOR BIT TO UPDATE!!!!
     fn mut_bit(&mut self, bit:u8) -> MutBitProxy<'_,Self> {MutBitProxy::<Self>::new(self,bit)} //Returns proxy struct, on drop proxy updates bit
     /// first one in a bit range
     fn first_one<R:BitZRange<Self>>(&self, range:&R) -> Option<u8> {
         let masked =  *self & Self::bitmask(range); //0000BitsWeWant0000
-       (masked!=Self::ZERO).then_some(masked.trailing_zeros() as u8)
+       (masked!=Self::ZERO).then(|| masked.trailing_zeros() as u8) //Then is lazy
+    }
+    /// last one in a bit range
+    fn last_one<R:BitZRange<Self>>(&self, range:&R) -> Option<u8> {
+        let masked =  *self & Self::bitmask(range); //0000BitsWeWant0000
+        (masked!=Self::ZERO).then(|| (Self::BITS-1 - masked.leading_zeros()) as u8)
     }
     /// first zero in a bit range
     fn first_zero<R:BitZRange<Self>>(&self, range:&R) -> Option<u8> {
         let masked =  *self | !Self::bitmask(range); //1111BitsWeWant1111
-       (masked!=!Self::ZERO).then_some(masked.trailing_ones() as u8)
+       (masked!=!Self::ZERO).then(|| masked.trailing_ones() as u8)
     }
+    /// last zero in a bit range
+    fn last_zero<R:BitZRange<Self>>(&self, range:&R) -> Option<u8> {
+        let masked =  *self | !Self::bitmask(range); //1111BitsWeWant1111
+       (masked!=!Self::ZERO).then(|| (Self::BITS-1) as u8 - masked.leading_ones() as u8)
+    }
+
 
 
 }
