@@ -1,7 +1,7 @@
 #![no_std]
 #[doc = include_str!("../README.md")]
 pub mod mut_proxy;
-pub use intops::{IntOps,IntLayout,IntTraits};
+pub use intops::IntOps;
 pub use mut_proxy::MutBitProxy;
 pub trait BitOps:IntOps { //Todo: Make this trait const when #143874 is staballized: https://github.com/rust-lang/rust/issues/143874
     /// number of bits required to address a bit in this type
