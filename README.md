@@ -3,6 +3,8 @@ Bit manipulation as fast as possible
 #![no_std] compatible
 
 ## Common Examples 
+Note: bits are 0 indexed
+
 Set a specific bit in a type
 ```rust
 use bit_operations::BitOps;
