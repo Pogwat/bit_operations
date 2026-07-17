@@ -63,11 +63,8 @@ pub trait BitOps:IntOps { //Todo: Make this trait const when #143874 is staballi
     /// last zero in a bit range
     fn last_zero<R:BitZRange<Self>>(&self, range:&R) -> Option<u8> {
         let masked =  *self | !Self::bitmask(range); //1111BitsWeWant1111
-       (masked!=!Self::ZERO).then(|| (Self::BITS-1) as u8 - masked.leading_ones() as u8)
+       (masked!=!Self::ZERO).then(|| (Self::BITS-1 - masked.leading_ones()) as u8)
     }
-
-
-
 }
 impl <T:IntOps>BitOps for T {}
 
